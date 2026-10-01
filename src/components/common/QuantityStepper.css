@@ -1,0 +1,56 @@
+.quantity-stepper {
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.quantity-stepper__button {
+  border-radius: 10px;
+  transition:
+    background-color 0.15s,
+    transform 0.12s;
+}
+
+.quantity-stepper__button:active {
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(0.9);
+}
+
+.quantity-stepper__value {
+  min-width: 26px;
+  font-weight: 600;
+  text-align: center;
+  animation: number-flip 0.25s var(--ease-spring);
+}
+
+/* Sizes */
+.quantity-stepper--md {
+  height: 48px;
+  padding: 4px;
+}
+
+.quantity-stepper--md .quantity-stepper__button {
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
+}
+
+.quantity-stepper--sm {
+  height: 38px;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.quantity-stepper--sm .quantity-stepper__button {
+  width: 32px;
+  height: 34px;
+  font-size: 16px;
+}
+
+@keyframes number-flip {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}

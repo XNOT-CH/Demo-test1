@@ -1,0 +1,109 @@
+.queue-ticket {
+  position: relative;
+  margin-top: 10px;
+  padding: 26px 20px 20px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 24px;
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+  animation: ticket-enter 0.7s var(--ease-spring);
+  transition:
+    box-shadow 0.4s,
+    border-color 0.4s;
+}
+
+.queue-ticket--ready {
+  border-color: var(--color-accent);
+  box-shadow:
+    0 0 0 6px var(--color-accent-soft),
+    var(--shadow-lg);
+  animation:
+    ticket-enter 0.7s var(--ease-spring),
+    ticket-ring 1.6s 0.7s infinite;
+}
+
+.queue-ticket__label {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.queue-ticket__number {
+  font-family: var(--font-heading);
+  font-size: 76px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 2px;
+  color: var(--color-primary);
+  animation: number-pop 0.8s var(--ease-spring) 0.25s both;
+}
+
+.queue-ticket__customer {
+  font-weight: 500;
+}
+
+/* Perforated "tear here" line with notches on both sides */
+.queue-ticket__divider {
+  position: relative;
+  height: 2px;
+  margin: 20px -20px;
+  border-top: 2px dashed var(--color-border);
+}
+
+.queue-ticket__divider::before,
+.queue-ticket__divider::after {
+  content: '';
+  position: absolute;
+  top: -13px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-background);
+}
+
+.queue-ticket__divider::before {
+  left: -13px;
+}
+
+.queue-ticket__divider::after {
+  right: -13px;
+}
+
+.queue-ticket__mood {
+  display: inline-block;
+  font-size: 48px;
+  animation: pop-in 0.5s var(--ease-spring);
+}
+
+.queue-ticket--making .queue-ticket__mood {
+  animation:
+    pop-in 0.5s var(--ease-spring),
+    bob 1.4s ease-in-out 0.5s infinite;
+}
+
+.queue-ticket__status-title {
+  display: block;
+  font-size: 20px;
+}
+
+@keyframes ticket-enter {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.9);
+  }
+}
+
+@keyframes ticket-ring {
+  50% {
+    box-shadow:
+      0 0 0 12px var(--color-accent-soft),
+      var(--shadow-lg);
+  }
+}
+
+@keyframes number-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}

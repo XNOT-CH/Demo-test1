@@ -1,0 +1,62 @@
+.order-progress {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  margin: 22px 8px 4px;
+}
+
+/* Track (::before) and filled bar (::after) behind the dots */
+.order-progress::before,
+.order-progress::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15%;
+  height: 4px;
+  border-radius: 4px;
+}
+
+.order-progress::before {
+  right: 15%;
+  background: var(--color-surface);
+}
+
+.order-progress::after {
+  width: calc(70% * var(--progress));
+  background: var(--color-primary);
+  transition: width 0.8s var(--ease-out);
+}
+
+.order-progress__step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.order-progress__dot {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  font-weight: 600;
+  transition: all 0.4s var(--ease-spring);
+}
+
+.order-progress__step--reached {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.order-progress__step--reached .order-progress__dot {
+  background: var(--color-primary);
+  color: var(--color-surface-raised);
+  transform: scale(1.08);
+}

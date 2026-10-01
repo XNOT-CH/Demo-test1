@@ -1,0 +1,22 @@
+.staff-page__orders {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.staff-page__footer {
+  justify-content: space-between;
+}
+
+/* Tablet / desktop: wider layout with a multi-column order board */
+@media (min-width: 760px) {
+  .app:has(.staff-page) {
+    max-width: 980px;
+  }
+
+  .staff-page__orders {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    align-items: start;
+  }
+}

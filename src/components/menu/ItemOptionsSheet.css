@@ -1,0 +1,67 @@
+.item-options__hero {
+  display: grid;
+  place-items: center;
+  height: 170px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 50% 60%, rgba(255, 255, 255, 0.6), transparent 60%), var(--item-color);
+}
+
+.item-options__emoji {
+  font-size: 92px;
+  filter: drop-shadow(0 10px 12px rgba(74, 50, 40, 0.2));
+  animation: pop-in 0.55s var(--ease-spring) 0.1s both;
+}
+
+.item-options__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 6px;
+}
+
+.item-options__title {
+  font-size: 22px;
+}
+
+.item-options__price {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.option-group {
+  margin: 14px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.option-group__legend {
+  margin-bottom: 8px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.option-group__choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Sticks to the bottom of the sheet while options scroll */
+.item-options__footer {
+  position: sticky;
+  bottom: calc(-18px - var(--safe-area-bottom));
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px -18px calc(-18px - var(--safe-area-bottom));
+  padding: 12px 18px calc(18px + var(--safe-area-bottom));
+  background: linear-gradient(transparent, var(--color-background) 25%);
+}
+
+.item-options__submit {
+  flex: 1;
+}

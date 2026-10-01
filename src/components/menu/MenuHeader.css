@@ -1,0 +1,59 @@
+.menu-header__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-header__logo {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-size: 26px;
+  animation: bob 3s ease-in-out infinite;
+}
+
+.menu-header__name {
+  display: block;
+  font-size: 18px;
+  line-height: 1.1;
+}
+
+.menu-header__tagline {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.my-queue-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-full);
+  background: var(--color-text);
+  color: var(--color-surface-raised);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  animation: pop-in 0.4s var(--ease-spring);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+.status-dot--making {
+  background: var(--color-warning);
+  animation: pulse 1.2s infinite;
+}
+
+.status-dot--ready {
+  background: #8fd08a;
+  animation: pulse 0.8s infinite;
+}

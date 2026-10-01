@@ -1,0 +1,106 @@
+.promo-carousel__track {
+  position: relative; /* makes slide.offsetLeft relative to the track */
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: var(--radius-lg);
+}
+
+.promo-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.promo-carousel__slide {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always; /* one swipe = one slide */
+}
+
+/* Dots + pause button */
+.promo-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.promo-carousel__dots {
+  display: flex;
+}
+
+/* The button is a larger invisible hit area around the small visible dot */
+.promo-carousel__dot {
+  padding: 10px 3px;
+}
+
+.promo-carousel__dot-track {
+  position: relative;
+  display: block;
+  width: 8px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: rgba(74, 50, 40, 0.18);
+  transition:
+    width 0.35s var(--ease-out),
+    background-color 0.3s;
+}
+
+.promo-carousel__dot--active .promo-carousel__dot-track {
+  width: 28px;
+  background: var(--color-primary);
+}
+
+/* With autoplay on, the active dot fills up as a countdown */
+.promo-carousel--autoplay .promo-carousel__dot--active .promo-carousel__dot-track {
+  background: rgba(164, 117, 81, 0.3);
+}
+
+.promo-carousel__dot-progress {
+  position: absolute;
+  inset: 0;
+  background: var(--color-primary);
+  transform-origin: left;
+  animation: promo-progress var(--autoplay-duration) linear forwards;
+}
+
+.promo-carousel--paused .promo-carousel__dot-progress {
+  animation-play-state: paused;
+}
+
+.promo-carousel__toggle {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  letter-spacing: -1px;
+  transition: background-color 0.2s;
+}
+
+.promo-carousel__toggle:hover {
+  background: var(--color-surface);
+}
+
+@keyframes promo-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* This animation is the autoplay timer, so keep its real duration even when the
+   global reduced-motion rule shortens every other animation. */
+@media (prefers-reduced-motion: reduce) {
+  .promo-carousel__dot-progress {
+    animation-duration: var(--autoplay-duration) !important;
+  }
+}
