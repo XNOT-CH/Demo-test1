@@ -15,8 +15,9 @@
  * @property {string} name
  * @property {string} description
  * @property {number} price
- * @property {string} emoji
- * @property {string} color  Background tint for the item artwork.
+ * @property {string} emoji  Shown in text (toasts, order summary) and when there's no photo.
+ * @property {string} color  Background tint behind the photo / emoji.
+ * @property {string} [image]  Photo URL. Built-in items get `assets/menu/<id>.webp`.
  * @property {keyof typeof BADGES} [badge]
  * @property {(keyof typeof OPTION_GROUPS)[]} optionGroups
  */
@@ -96,6 +97,13 @@ export const CATEGORY_DEFAULTS = {
   tea: { optionGroups: ['temperature', 'sweetness'], color: '#D9E6C8' },
   milk: { optionGroups: ['temperature', 'sweetness', 'milk'], color: '#F3E2CC' },
   bakery: { optionGroups: ['warmUp'], color: '#F4DDB8' },
+}
+
+// Each built-in item's photo is assets/menu/<item id>.webp (sources in CREDITS.md there).
+const MENU_PHOTOS = import.meta.glob('../assets/menu/*.webp', { eager: true, import: 'default' })
+
+function withPhoto(item) {
+  return { ...item, image: MENU_PHOTOS[`../assets/menu/${item.id}.webp`] }
 }
 
 /** @type {MenuItem[]} */
@@ -282,4 +290,4 @@ export const MENU_ITEMS = [
     color: '#F6E6C9',
     optionGroups: [],
   },
-]
+].map(withPhoto)

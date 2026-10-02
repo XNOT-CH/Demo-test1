@@ -23,6 +23,13 @@
   animation: bob 3s ease-in-out infinite;
 }
 
+.login-card__logo-image {
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  object-fit: contain;
+}
+
 .login-card__title {
   font-size: 20px;
   text-align: center;

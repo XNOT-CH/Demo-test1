@@ -1,3 +1,4 @@
+import MenuItemImage from '@/components/common/MenuItemImage'
 import { BADGES } from '@/data/menu'
 import { formatPrice } from '@/utils/format'
 import './MenuCard.css'
@@ -7,9 +8,12 @@ export default function MenuCard({ item, index, onSelect }) {
     <li className="menu-card" style={{ '--stagger-index': index }}>
       <button type="button" className="menu-card__button" onClick={() => onSelect(item)}>
         <span className="menu-card__art" style={{ '--item-color': item.color }}>
-          <span className="menu-card__emoji" aria-hidden="true">
-            {item.emoji}
-          </span>
+          <MenuItemImage
+            image={item.image}
+            emoji={item.emoji}
+            className="menu-card__photo"
+            emojiClassName="menu-card__emoji"
+          />
           {item.badge && (
             <span className={`menu-card__badge menu-card__badge--${item.badge}`}>
               {BADGES[item.badge].label}

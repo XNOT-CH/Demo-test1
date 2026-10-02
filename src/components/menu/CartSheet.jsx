@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import MenuItemImage from '@/components/common/MenuItemImage'
 import QuantityStepper from '@/components/common/QuantityStepper'
 import { ORDER_TYPE, ORDER_TYPE_META } from '@/constants/orderType'
 import { STORAGE_KEYS } from '@/constants/storageKeys'
 import { useCart } from '@/hooks/useCart'
+import { useMenuItems } from '@/hooks/useMenuItems'
 import { getLineTotal } from '@/utils/cart'
 import { formatPrice } from '@/utils/format'
 import { readJSON, writeJSON } from '@/utils/storage'
@@ -13,6 +15,12 @@ const SUBMIT_DELAY_MS = 450
 /** Content of the cart bottom sheet: line items + checkout form. */
 export default function CartSheet({ onCheckout }) {
   const { lines, totalPrice, changeQuantity } = useCart()
+  const menuItems = useMenuItems()
+  // Cart lines don't copy the photo, so staff-uploaded images aren't duplicated into every order.
+  const photoByItemId = useMemo(
+    () => new Map(menuItems.map((item) => [item.id, item.image])),
+    [menuItems],
+  )
   const [customerName, setCustomerName] = useState(() => readJSON(STORAGE_KEYS.CUSTOMER_NAME, ''))
   const [orderType, setOrderType] = useState(ORDER_TYPE.DINE_IN)
   const [note, setNote] = useState('')
@@ -44,7 +52,11 @@ export default function CartSheet({ onCheckout }) {
         {lines.map((line) => (
           <li key={line.id} className="cart-line">
             <span className="cart-line__thumb" style={{ '--item-color': line.color }}>
-              {line.emoji}
+              <MenuItemImage
+                image={photoByItemId.get(line.itemId)}
+                emoji={line.emoji}
+                className="cart-line__photo"
+              />
             </span>
             <div className="cart-line__info">
               <strong className="cart-line__name">{line.name}</strong>

@@ -56,10 +56,19 @@ export function getMenuItems() {
  * @param {number} input.price
  * @param {string} input.categoryId
  * @param {string} [input.emoji]   Falls back to the category icon.
+ * @param {string} [input.image]   Photo as a data URL (see utils/image.js).
  * @param {string} [input.badge]   see BADGES
  * @returns {MenuItem}
  */
-export function addMenuItem({ name, description = '', price, categoryId, emoji = '', badge }) {
+export function addMenuItem({
+  name,
+  description = '',
+  price,
+  categoryId,
+  emoji = '',
+  image,
+  badge,
+}) {
   const category = CATEGORIES.find((c) => c.id === categoryId)
   /** @type {MenuItem} */
   const item = {
@@ -70,6 +79,7 @@ export function addMenuItem({ name, description = '', price, categoryId, emoji =
     price,
     emoji: emoji.trim() || category.icon,
     ...CATEGORY_DEFAULTS[categoryId],
+    ...(image && { image }),
     ...(badge && { badge }),
     isCustom: true,
   }

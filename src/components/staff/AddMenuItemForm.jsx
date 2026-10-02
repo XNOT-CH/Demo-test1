@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import ConfirmButton from '@/components/common/ConfirmButton'
+import MenuItemImage from '@/components/common/MenuItemImage'
 import { ALL_CATEGORY_ID, BADGES, CATEGORIES, CATEGORY_DEFAULTS } from '@/data/menu'
 import { formatPrice } from '@/utils/format'
+import { toMenuPhoto } from '@/utils/image'
 import './AddMenuItemForm.css'
 
 const ITEM_CATEGORIES = CATEGORIES.filter((category) => category.id !== ALL_CATEGORY_ID)
@@ -24,9 +26,29 @@ export default function AddMenuItemForm({ customItems, onAdd, onRemove }) {
   const [categoryId, setCategoryId] = useState(ITEM_CATEGORIES[0].id)
   const [emoji, setEmoji] = useState('')
   const [badge, setBadge] = useState('new')
+  const [photo, setPhoto] = useState('')
+  const [isProcessingPhoto, setIsProcessingPhoto] = useState(false)
+  const [photoError, setPhotoError] = useState('')
 
   const category = getCategory(categoryId)
-  const canSubmit = name.trim() !== '' && Number(price) > 0
+  const canSubmit = name.trim() !== '' && Number(price) > 0 && !isProcessingPhoto
+
+  async function handlePhotoChange(event) {
+    const file = event.target.files?.[0]
+    // Reset so picking the same file again still fires a change event.
+    event.target.value = ''
+    if (!file) return
+
+    setPhotoError('')
+    setIsProcessingPhoto(true)
+    try {
+      setPhoto(await toMenuPhoto(file))
+    } catch {
+      setPhotoError('เปิดไฟล์นี้เป็นรูปไม่ได้ ลองเลือกรูปอื่นนะ')
+    } finally {
+      setIsProcessingPhoto(false)
+    }
+  }
 
   function handleSubmit(event) {
     event.preventDefault()
@@ -37,6 +59,7 @@ export default function AddMenuItemForm({ customItems, onAdd, onRemove }) {
       price: Number(price),
       categoryId,
       emoji,
+      image: photo || undefined,
       badge: badge || undefined,
     })
   }
@@ -69,6 +92,49 @@ export default function AddMenuItemForm({ customItems, onAdd, onRemove }) {
           />
         </label>
 
+        <div className="form-field">
+          <span>รูปเมนู</span>
+          <div className="add-menu__photo-field">
+            <label
+              className="add-menu__photo-picker"
+              style={{ '--item-color': CATEGORY_DEFAULTS[categoryId].color }}
+            >
+              {photo ? (
+                <img className="add-menu__photo-preview" src={photo} alt="" />
+              ) : (
+                <span className="add-menu__photo-placeholder">
+                  <span aria-hidden="true">📷</span>
+                  {isProcessingPhoto ? 'กำลังย่อรูป…' : 'แตะเพื่อเลือกรูป'}
+                </span>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="add-menu__photo-input"
+                onChange={handlePhotoChange}
+                aria-label={photo ? 'เปลี่ยนรูปเมนู' : 'เลือกรูปเมนู'}
+              />
+            </label>
+            {photo && (
+              <div className="add-menu__photo-actions">
+                <small className="text-muted">แตะรูปเพื่อเปลี่ยน</small>
+                <button
+                  type="button"
+                  className="link-btn link-btn--danger"
+                  onClick={() => setPhoto('')}
+                >
+                  ลบรูป
+                </button>
+              </div>
+            )}
+          </div>
+          {photoError && (
+            <small className="add-menu__photo-error" role="alert">
+              {photoError}
+            </small>
+          )}
+        </div>
+
         <div className="add-menu__row">
           <label className="form-field">
             <span>ราคา (บาท) *</span>
@@ -86,7 +152,7 @@ export default function AddMenuItemForm({ customItems, onAdd, onRemove }) {
           </label>
 
           <label className="form-field">
-            <span>อีโมจิ</span>
+            <span>อีโมจิ (ใช้แทนตอนไม่มีรูป)</span>
             <span className="add-menu__emoji-field">
               <span
                 className="add-menu__thumb"
@@ -163,7 +229,11 @@ export default function AddMenuItemForm({ customItems, onAdd, onRemove }) {
                   style={{ '--item-color': item.color }}
                   aria-hidden="true"
                 >
-                  {item.emoji}
+                  <MenuItemImage
+                    image={item.image}
+                    emoji={item.emoji}
+                    className="add-menu__thumb-photo"
+                  />
                 </span>
                 <span className="add-menu__item-info">
                   <strong className="add-menu__item-name">{item.name}</strong>

@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
+import logo from '@/assets/logo.png'
 import BottomSheet from '@/components/common/BottomSheet'
 import { useStaffSession } from '@/hooks/useStaffSession'
 import { signOut } from '@/services/authService'
@@ -14,7 +15,7 @@ export default function MenuHeader({ activeOrder }) {
     <header className="page-header menu-header">
       <div className="menu-header__brand">
         <span className="menu-header__logo" aria-hidden="true">
-          🐱
+          <img className="menu-header__logo-image" src={logo} alt="" width={192} height={174} />
         </span>
         <div>
           <strong className="menu-header__name">Gachi Café</strong>

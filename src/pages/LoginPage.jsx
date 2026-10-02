@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useLocation } from 'react-router-dom'
+import logo from '@/assets/logo.png'
 import { useStaffSession } from '@/hooks/useStaffSession'
 import { signIn } from '@/services/authService'
 import './LoginPage.css'
@@ -37,7 +38,7 @@ export default function LoginPage() {
 
       <form className="login-card" onSubmit={handleSubmit}>
         <span className="login-card__logo" aria-hidden="true">
-          🐱
+          <img className="login-card__logo-image" src={logo} alt="" width={192} height={174} />
         </span>
         <h2 className="login-card__title">สำหรับพนักงาน</h2>
         <p className="login-card__subtitle">เข้าสู่ระบบเพื่อจัดการออเดอร์และเมนู</p>

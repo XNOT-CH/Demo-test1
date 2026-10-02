@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import MenuItemImage from '@/components/common/MenuItemImage'
 import QuantityStepper from '@/components/common/QuantityStepper'
 import { OPTION_GROUPS } from '@/data/menu'
 import { createCartLine } from '@/utils/cart'
@@ -22,9 +23,12 @@ export default function ItemOptionsSheet({ item, onAddToCart }) {
   return (
     <div className="item-options">
       <div className="item-options__hero" style={{ '--item-color': item.color }}>
-        <span className="item-options__emoji" aria-hidden="true">
-          {item.emoji}
-        </span>
+        <MenuItemImage
+          image={item.image}
+          emoji={item.emoji}
+          className="item-options__photo"
+          emojiClassName="item-options__emoji"
+        />
       </div>
 
       <div className="item-options__header">

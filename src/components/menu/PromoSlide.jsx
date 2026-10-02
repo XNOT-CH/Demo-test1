@@ -1,3 +1,4 @@
+import MenuItemImage from '@/components/common/MenuItemImage'
 import { BADGES } from '@/data/menu'
 import './PromoSlide.css'
 
@@ -32,9 +33,12 @@ export default function PromoSlide({ slide, isActive, onSelect }) {
           )}
         </span>
       </span>
-      <span className="promo-slide__emoji" aria-hidden="true">
-        {item.emoji}
-      </span>
+      <MenuItemImage
+        image={item.image}
+        emoji={item.emoji}
+        className="promo-slide__photo"
+        emojiClassName="promo-slide__emoji"
+      />
     </button>
   )
 }
