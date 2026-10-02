@@ -23,6 +23,11 @@
     ticket-ring 1.6s 0.7s infinite;
 }
 
+.queue-ticket--cancelled .queue-ticket__number {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
 .queue-ticket__label {
   font-size: 14px;
   color: var(--color-text-muted);

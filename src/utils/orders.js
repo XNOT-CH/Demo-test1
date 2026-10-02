@@ -17,7 +17,7 @@ export function countOrdersAhead(orders, target) {
 }
 
 export function countByStatus(orders) {
-  const counts = { active: 0, new: 0, making: 0, ready: 0, done: 0 }
+  const counts = { active: 0, new: 0, making: 0, ready: 0, done: 0, cancelled: 0 }
   for (const order of orders) {
     counts[order.status] += 1
     if (isActiveStatus(order.status)) counts.active += 1
@@ -26,5 +26,7 @@ export function countByStatus(orders) {
 }
 
 export function getSalesTotal(orders) {
-  return orders.reduce((sum, order) => sum + order.total, 0)
+  return orders
+    .filter((order) => order.status !== ORDER_STATUS.CANCELLED)
+    .reduce((sum, order) => sum + order.total, 0)
 }

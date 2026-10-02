@@ -1,4 +1,4 @@
-import { ORDER_STATUS, getNextStatus } from '@/constants/orderStatus'
+import { ORDER_STATUS, canCancelOrder, getNextStatus } from '@/constants/orderStatus'
 import { STORAGE_KEYS } from '@/constants/storageKeys'
 import { getCartTotal } from '@/utils/cart'
 import { formatQueueNumber, getDateKey } from '@/utils/format'
@@ -110,6 +110,17 @@ export function advanceOrderStatus(orderId) {
       const nextStatus = getNextStatus(order.status)
       if (order.id !== orderId || !nextStatus) return order
       return { ...order, status: nextStatus, updatedAt: Date.now() }
+    }),
+  )
+}
+
+/** Cancels the order if the barista hasn't started it yet (checked against the latest data). */
+export function cancelOrder(orderId) {
+  const latestOrders = readJSON(STORAGE_KEYS.ORDERS, orders)
+  saveOrders(
+    latestOrders.map((order) => {
+      if (order.id !== orderId || !canCancelOrder(order.status)) return order
+      return { ...order, status: ORDER_STATUS.CANCELLED, updatedAt: Date.now() }
     }),
   )
 }

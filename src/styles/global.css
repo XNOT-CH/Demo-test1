@@ -177,6 +177,8 @@ input {
   border-radius: var(--radius-md);
   font-family: var(--font-heading);
   font-weight: 500;
+  color: inherit;
+  text-decoration: none; /* also used on <Link> */
   transition:
     transform 0.15s var(--ease-out),
     background-color 0.2s;
@@ -202,6 +204,11 @@ input {
 
 .btn--secondary {
   background: var(--color-surface);
+}
+
+.btn--danger {
+  background: var(--color-danger);
+  color: var(--color-surface-raised);
 }
 
 .btn--sm {
@@ -236,7 +243,9 @@ input {
   height: 40px;
   border-radius: var(--radius-sm);
   background: var(--color-surface);
+  color: inherit;
   font-size: 18px;
+  text-decoration: none; /* also used on <Link> */
   transition: background-color 0.2s;
 }
 

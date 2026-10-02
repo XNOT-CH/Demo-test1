@@ -8,14 +8,33 @@ import './PromoCarousel.css'
 const AUTOPLAY_INTERVAL_MS = 4000
 /** How long scroll events are ignored after a programmatic slide change. */
 const PROGRAMMATIC_SCROLL_MS = 700
+/** No scroll events for this long means the scroll (including momentum) has finished. */
+const SCROLL_SETTLE_MS = 150
+
+/** Index of the track child closest to the current scroll position. */
+function getClosestIndex(track) {
+  let closestIndex = 0
+  let closestDistance = Infinity
+  Array.from(track.children).forEach((child, index) => {
+    const distance = Math.abs(child.offsetLeft - track.scrollLeft)
+    if (distance < closestDistance) {
+      closestDistance = distance
+      closestIndex = index
+    }
+  })
+  return closestIndex
+}
 
 /**
- * Auto-playing, swipeable banner carousel.
+ * Auto-playing, swipeable banner carousel that loops forever.
  *
  * - Swiping uses native horizontal scroll + CSS scroll-snap (smooth on mobile).
  * - The autoplay timer *is* the progress bar's CSS animation: when it finishes we go to
  *   the next slide. Pausing simply pauses the animation, so the bar and timer stay in sync.
- * - Pauses while hovered, touched or keyboard-focused, and has a pause button.
+ * - Seamless loop: a copy of the first slide sits after the last one. Going past the last
+ *   slide scrolls forward onto the copy, then jumps back to the real first slide. The two
+ *   look identical, so the jump can't be seen and the carousel never rewinds.
+ * - Pauses only while touched (so autoplay doesn't fight a swipe) or keyboard-focused.
  * - With "reduce motion" turned on, it still auto-plays but switches slides instantly
  *   instead of sliding.
  */
@@ -23,27 +42,35 @@ export default function PromoCarousel({ slides, onSelectItem, ariaLabel = 'เ�
   const trackRef = useRef(null)
   const isProgrammaticScrollRef = useRef(false)
   const programmaticScrollTimerRef = useRef(null)
+  const scrollSettleTimerRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [isHovered, setIsHovered] = useState(false)
   const [isTouching, setIsTouching] = useState(false)
   const [hasKeyboardFocus, setHasKeyboardFocus] = useState(false)
-  const [isStoppedByUser, setIsStoppedByUser] = useState(false)
   const prefersReducedMotion = usePrefersReducedMotion()
 
   const hasMultipleSlides = slides.length > 1
-  const isAutoplayEnabled = hasMultipleSlides && !isStoppedByUser
-  const isTemporarilyPaused = isHovered || isTouching || hasKeyboardFocus
+  const isAutoplayEnabled = hasMultipleSlides
+  const isTemporarilyPaused = isTouching || hasKeyboardFocus
+  // Track index of the copy of the first slide (only rendered when there's something to loop).
+  const loopCopyIndex = slides.length
+  const trackSlides = hasMultipleSlides ? [...slides, slides[0]] : slides
 
+  /** @param {number} trackIndex  may be `loopCopyIndex` to continue forward past the last slide */
   const goTo = useCallback(
-    (index) => {
+    (trackIndex) => {
       const track = trackRef.current
-      const slide = track?.children[index]
+      const slide = track?.children[trackIndex]
       if (!slide) return
 
+      // Still resting on the copy of the first slide? Hop to the real one first so we
+      // scroll the short way instead of rewinding through every slide.
+      if (getClosestIndex(track) === loopCopyIndex && trackIndex !== loopCopyIndex) {
+        track.scrollLeft = track.children[0].offsetLeft
+      }
+
       // Update the dots right away and ignore scroll events until the scroll settles —
-      // otherwise wrapping from the last slide back to the first flickers through
-      // every slide in between.
-      setActiveIndex(index)
+      // otherwise jumping to a far-away dot flickers through every slide in between.
+      setActiveIndex(trackIndex % slides.length)
       isProgrammaticScrollRef.current = true
       clearTimeout(programmaticScrollTimerRef.current)
       programmaticScrollTimerRef.current = setTimeout(() => {
@@ -52,27 +79,35 @@ export default function PromoCarousel({ slides, onSelectItem, ariaLabel = 'เ�
 
       track.scrollTo({ left: slide.offsetLeft, behavior: prefersReducedMotion ? 'auto' : 'smooth' })
     },
-    [prefersReducedMotion],
+    [prefersReducedMotion, loopCopyIndex, slides.length],
   )
 
-  useEffect(() => () => clearTimeout(programmaticScrollTimerRef.current), [])
+  useEffect(
+    () => () => {
+      clearTimeout(programmaticScrollTimerRef.current)
+      clearTimeout(scrollSettleTimerRef.current)
+    },
+    [],
+  )
 
-  const goToNext = () => goTo((activeIndex + 1) % slides.length)
+  // From the last slide, "next" is the copy of the first one.
+  const goToNext = () => goTo(activeIndex + 1)
 
-  // When the user swipes, the active slide is whichever one is closest to the scroll position.
   function handleScroll() {
+    clearTimeout(scrollSettleTimerRef.current)
+    scrollSettleTimerRef.current = setTimeout(handleScrollSettled, SCROLL_SETTLE_MS)
+
+    // When the user swipes, the active slide is whichever one is closest to the scroll position.
     if (isProgrammaticScrollRef.current) return
+    setActiveIndex(getClosestIndex(trackRef.current) % slides.length)
+  }
+
+  function handleScrollSettled() {
     const track = trackRef.current
-    let closestIndex = 0
-    let closestDistance = Infinity
-    Array.from(track.children).forEach((child, index) => {
-      const distance = Math.abs(child.offsetLeft - track.scrollLeft)
-      if (distance < closestDistance) {
-        closestDistance = distance
-        closestIndex = index
-      }
-    })
-    setActiveIndex(closestIndex)
+    if (!track || getClosestIndex(track) !== loopCopyIndex) return
+    // Landed on the copy of the first slide: jump to the real one. Setting scrollLeft is
+    // instant, and both slides look (and animate) the same, so the jump is invisible.
+    track.scrollLeft = track.children[0].offsetLeft
   }
 
   function handleFocus(event) {
@@ -89,15 +124,6 @@ export default function PromoCarousel({ slides, onSelectItem, ariaLabel = 'เ�
     setIsTouching(true)
   }
 
-  // Mouse only — on touch devices a tap fires pointerenter without a matching leave.
-  function handlePointerEnter(event) {
-    if (event.pointerType === 'mouse') setIsHovered(true)
-  }
-
-  function handlePointerLeave(event) {
-    if (event.pointerType === 'mouse') setIsHovered(false)
-  }
-
   const className = [
     'promo-carousel',
     isAutoplayEnabled && 'promo-carousel--autoplay',
@@ -111,8 +137,6 @@ export default function PromoCarousel({ slides, onSelectItem, ariaLabel = 'เ�
       className={className}
       aria-roledescription="carousel"
       aria-label={ariaLabel}
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
       onTouchStart={handleTouchStart}
       onTouchEnd={() => setIsTouching(false)}
       onTouchCancel={() => setIsTouching(false)}
@@ -126,26 +150,33 @@ export default function PromoCarousel({ slides, onSelectItem, ariaLabel = 'เ�
         // Don't announce every automatic slide change to screen readers.
         aria-live={isAutoplayEnabled ? 'off' : 'polite'}
       >
-        {slides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className="promo-carousel__slide"
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`${index + 1} จาก ${slides.length}`}
-          >
-            {slide.type === PROMOTION_TYPE.IMAGE ? (
-              <PromoImageSlide
-                slide={slide}
-                isActive={index === activeIndex}
-                isFirst={index === 0}
-                onSelect={onSelectItem}
-              />
-            ) : (
-              <PromoSlide slide={slide} isActive={index === activeIndex} onSelect={onSelectItem} />
-            )}
-          </div>
-        ))}
+        {trackSlides.map((slide, trackIndex) => {
+          const isLoopCopy = trackIndex === loopCopyIndex
+          // The copy is "active" together with the first slide so their animations stay in sync.
+          const isActive = trackIndex % slides.length === activeIndex
+          return (
+            <div
+              key={isLoopCopy ? `${slide.id}-loop-copy` : slide.id}
+              className="promo-carousel__slide"
+              role={isLoopCopy ? undefined : 'group'}
+              aria-roledescription={isLoopCopy ? undefined : 'slide'}
+              aria-label={isLoopCopy ? undefined : `${trackIndex + 1} จาก ${slides.length}`}
+              aria-hidden={isLoopCopy || undefined}
+              inert={isLoopCopy || undefined}
+            >
+              {slide.type === PROMOTION_TYPE.IMAGE ? (
+                <PromoImageSlide
+                  slide={slide}
+                  isActive={isActive}
+                  isFirst={trackIndex === 0}
+                  onSelect={onSelectItem}
+                />
+              ) : (
+                <PromoSlide slide={slide} isActive={isActive} onSelect={onSelectItem} />
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {hasMultipleSlides && (
@@ -175,15 +206,6 @@ export default function PromoCarousel({ slides, onSelectItem, ariaLabel = 'เ�
               )
             })}
           </div>
-
-          <button
-            type="button"
-            className="promo-carousel__toggle"
-            onClick={() => setIsStoppedByUser((stopped) => !stopped)}
-            aria-label={isStoppedByUser ? 'เล่นสไลด์อัตโนมัติ' : 'หยุดสไลด์อัตโนมัติ'}
-          >
-            {isStoppedByUser ? '▶' : '❚❚'}
-          </button>
         </div>
       )}
     </section>

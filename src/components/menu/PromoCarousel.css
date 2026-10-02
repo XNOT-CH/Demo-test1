@@ -19,7 +19,7 @@
   scroll-snap-stop: always; /* one swipe = one slide */
 }
 
-/* Dots + pause button */
+/* Dots */
 .promo-carousel__controls {
   display: flex;
   align-items: center;
@@ -70,22 +70,6 @@
 
 .promo-carousel--paused .promo-carousel__dot-progress {
   animation-play-state: paused;
-}
-
-.promo-carousel__toggle {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  color: var(--color-text-muted);
-  font-size: 10px;
-  letter-spacing: -1px;
-  transition: background-color 0.2s;
-}
-
-.promo-carousel__toggle:hover {
-  background: var(--color-surface);
 }
 
 @keyframes promo-progress {

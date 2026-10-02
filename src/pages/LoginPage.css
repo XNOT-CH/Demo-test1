@@ -1,0 +1,73 @@
+.login-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 24px 20px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 24px;
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-md);
+  animation: fade-up 0.4s var(--ease-out);
+}
+
+.login-card__logo {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  font-size: 36px;
+  animation: bob 3s ease-in-out infinite;
+}
+
+.login-card__title {
+  font-size: 20px;
+  text-align: center;
+}
+
+.login-card__subtitle {
+  margin-top: -10px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.login-card__password {
+  position: relative;
+  display: flex;
+}
+
+.login-card__password .form-field__input {
+  flex: 1;
+  min-width: 0;
+  padding-right: 64px;
+}
+
+.login-card__toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 500;
+  transform: translateY(-50%);
+}
+
+.login-card__error {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: #f6dedb;
+  color: var(--color-danger);
+  font-size: 14px;
+  animation: wiggle 0.35s;
+}
+
+.login-card .btn--primary {
+  margin-top: 4px;
+}

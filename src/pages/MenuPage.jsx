@@ -8,14 +8,16 @@ import CategoryTabs from '@/components/menu/CategoryTabs'
 import ItemOptionsSheet from '@/components/menu/ItemOptionsSheet'
 import MenuCard from '@/components/menu/MenuCard'
 import MenuHeader from '@/components/menu/MenuHeader'
+import MenuSearch from '@/components/menu/MenuSearch'
 import PromoCarousel from '@/components/menu/PromoCarousel'
-import { ALL_CATEGORY_ID, CATEGORIES, MENU_ITEMS } from '@/data/menu'
+import { ALL_CATEGORY_ID, CATEGORIES } from '@/data/menu'
 import { PROMOTION_TYPE, PROMOTIONS } from '@/data/promotions'
 import { useCart } from '@/hooks/useCart'
+import { useMenuItems } from '@/hooks/useMenuItems'
 import { useMyActiveOrder } from '@/hooks/useOrders'
 import { useToast } from '@/hooks/useToast'
 import { createOrder } from '@/services/orderService'
-import { getMenuItemById } from '@/utils/menu'
+import { getMenuItemById, searchMenuItems, sortByBadge } from '@/utils/menu'
 import './MenuPage.css'
 
 // Resolve each promo's menu item once. Item slides need a valid item; image slides don't.
@@ -27,23 +29,28 @@ const promoSlides = PROMOTIONS.map((promo) => ({
 export default function MenuPage() {
   const navigate = useNavigate()
   const cart = useCart()
+  const menuItems = useMenuItems()
   const activeOrder = useMyActiveOrder()
   const { message: toastMessage, showToast } = useToast()
 
   const [categoryId, setCategoryId] = useState(ALL_CATEGORY_ID)
+  const [searchQuery, setSearchQuery] = useState('')
   // The selected item is kept separately from the open flag so the sheet
   // still has content to show while its close animation plays.
   const [selectedItem, setSelectedItem] = useState(null)
   const [isItemSheetOpen, setIsItemSheetOpen] = useState(false)
   const [isCartOpen, setIsCartOpen] = useState(false)
 
-  const visibleItems = useMemo(
-    () =>
+  // New and bestseller items are shown first in every category.
+  const sortedMenuItems = useMemo(() => sortByBadge(menuItems), [menuItems])
+
+  const visibleItems = useMemo(() => {
+    const categoryItems =
       categoryId === ALL_CATEGORY_ID
-        ? MENU_ITEMS
-        : MENU_ITEMS.filter((item) => item.categoryId === categoryId),
-    [categoryId],
-  )
+        ? sortedMenuItems
+        : sortedMenuItems.filter((item) => item.categoryId === categoryId)
+    return searchMenuItems(categoryItems, searchQuery)
+  }, [sortedMenuItems, categoryId, searchQuery])
 
   const openItem = useCallback((item) => {
     setSelectedItem(item)
@@ -73,16 +80,27 @@ export default function MenuPage() {
       <section className="menu-page__hero">
         <p className="menu-page__greeting">สวัสดีเมี๊ยว~ วันนี้รับอะไรดี?</p>
         <PromoCarousel slides={promoSlides} onSelectItem={openItem} />
+        <MenuSearch value={searchQuery} onChange={setSearchQuery} />
       </section>
 
       <CategoryTabs categories={CATEGORIES} activeId={categoryId} onChange={setCategoryId} />
 
-      {/* key re-mounts the grid so the stagger animation replays on category change */}
-      <ul key={categoryId} className="menu-page__grid">
-        {visibleItems.map((item, index) => (
-          <MenuCard key={item.id} item={item} index={index} onSelect={openItem} />
-        ))}
-      </ul>
+      {visibleItems.length > 0 ? (
+        // key re-mounts the grid so the stagger animation replays on category change
+        <ul key={categoryId} className="menu-page__grid">
+          {visibleItems.map((item, index) => (
+            <MenuCard key={item.id} item={item} index={index} onSelect={openItem} />
+          ))}
+        </ul>
+      ) : (
+        <div className="empty-state">
+          <div className="empty-state__icon">🙀</div>
+          <p>ไม่เจอเมนู “{searchQuery.trim()}” เลยเมี๊ยว</p>
+          <button type="button" className="link-btn" onClick={() => setSearchQuery('')}>
+            ล้างคำค้นหา
+          </button>
+        </div>
+      )}
 
       <footer className="page-footer">
         <Link to="/staff" className="link-btn">

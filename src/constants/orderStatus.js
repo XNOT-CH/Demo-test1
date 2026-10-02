@@ -3,9 +3,10 @@ export const ORDER_STATUS = Object.freeze({
   MAKING: 'making',
   READY: 'ready',
   DONE: 'done',
+  CANCELLED: 'cancelled',
 })
 
-/** Order lifecycle, in sequence. */
+/** Order lifecycle, in sequence. Cancelled sits outside the flow. */
 export const ORDER_STATUS_FLOW = [
   ORDER_STATUS.NEW,
   ORDER_STATUS.MAKING,
@@ -34,13 +35,24 @@ export const ORDER_STATUS_META = {
     shortLabel: 'เสร็จแล้ว',
     actionLabel: null,
   },
+  [ORDER_STATUS.CANCELLED]: {
+    label: 'ยกเลิกออเดอร์แล้ว',
+    shortLabel: 'ยกเลิก',
+    actionLabel: null,
+  },
 }
 
 export function getNextStatus(status) {
   const index = ORDER_STATUS_FLOW.indexOf(status)
+  if (index === -1) return null
   return ORDER_STATUS_FLOW[index + 1] ?? null
 }
 
 export function isActiveStatus(status) {
-  return status !== ORDER_STATUS.DONE
+  return status !== ORDER_STATUS.DONE && status !== ORDER_STATUS.CANCELLED
+}
+
+/** Customers can cancel only until the barista starts making the order. */
+export function canCancelOrder(status) {
+  return status === ORDER_STATUS.NEW
 }

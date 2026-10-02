@@ -2,13 +2,7 @@ import { Link } from 'react-router-dom'
 import { formatPrice } from '@/utils/format'
 import './StaffHeader.css'
 
-export default function StaffHeader({
-  orderCount,
-  pendingCount,
-  salesTotal,
-  isSoundOn,
-  onToggleSound,
-}) {
+export default function StaffHeader({ orderCount, pendingCount, salesTotal, onSignOut }) {
   const stats = [
     { label: 'ออเดอร์', value: orderCount },
     { label: 'รอทำ', value: pendingCount },
@@ -25,14 +19,8 @@ export default function StaffHeader({
           <h1 className="staff-header__title">ออเดอร์วันนี้</h1>
           <small className="staff-header__subtitle">หน้าจอพนักงาน · Gachi Café</small>
         </div>
-        <button
-          type="button"
-          className={`icon-btn staff-header__icon-btn ${isSoundOn ? 'staff-header__icon-btn--on' : ''}`}
-          onClick={onToggleSound}
-          aria-pressed={isSoundOn}
-          aria-label="เสียงเตือนออเดอร์ใหม่"
-        >
-          {isSoundOn ? '🔔' : '🔕'}
+        <button type="button" className="staff-header__sign-out" onClick={onSignOut}>
+          ออกจากระบบ
         </button>
       </div>
 

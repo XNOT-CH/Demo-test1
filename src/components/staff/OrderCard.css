@@ -23,6 +23,15 @@
   opacity: 0.75;
 }
 
+.order-card--cancelled {
+  border-left-color: var(--color-danger);
+  opacity: 0.6;
+}
+
+.order-card--cancelled .order-card__total {
+  text-decoration: line-through;
+}
+
 .order-card--highlighted {
   animation:
     fade-up 0.4s var(--ease-out),
@@ -83,6 +92,11 @@
 .status-badge--done {
   background: var(--color-surface);
   color: var(--color-text-muted);
+}
+
+.status-badge--cancelled {
+  background: #f6dedb;
+  color: var(--color-danger);
 }
 
 .order-card__items {

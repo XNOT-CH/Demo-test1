@@ -4,17 +4,12 @@ const HIGHLIGHT_DURATION_MS = 4000
 
 /**
  * Detects orders that arrive after the component mounted.
- * Returns the ids to highlight and calls `onNewOrders` so the caller can play a sound.
+ * Returns the ids to highlight.
  */
-export function useNewOrderAlert(orders, onNewOrders) {
+export function useNewOrderAlert(orders) {
   const seenIdsRef = useRef(null)
   const [highlightedIds, setHighlightedIds] = useState(() => new Set())
-  const onNewOrdersRef = useRef(onNewOrders)
   const timersRef = useRef([])
-
-  useEffect(() => {
-    onNewOrdersRef.current = onNewOrders
-  })
 
   useEffect(() => {
     const ids = orders.map((order) => order.id)
@@ -29,7 +24,6 @@ export function useNewOrderAlert(orders, onNewOrders) {
     if (newIds.length === 0) return
 
     newIds.forEach((id) => seenIdsRef.current.add(id))
-    onNewOrdersRef.current?.(newIds)
     setHighlightedIds((current) => new Set([...current, ...newIds]))
 
     const timer = setTimeout(() => {

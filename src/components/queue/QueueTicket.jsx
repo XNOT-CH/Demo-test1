@@ -8,6 +8,7 @@ const STATUS_MOOD = {
   [ORDER_STATUS.MAKING]: '🐱',
   [ORDER_STATUS.READY]: '😻',
   [ORDER_STATUS.DONE]: '😸',
+  [ORDER_STATUS.CANCELLED]: '😿',
 }
 
 function getStatusMessage(status, ordersAhead) {
@@ -18,6 +19,8 @@ function getStatusMessage(status, ordersAhead) {
       return 'บาริสต้าแมวกำลังชงให้อยู่นะ~'
     case ORDER_STATUS.READY:
       return 'มารับที่เคาน์เตอร์ได้เลย 🔔'
+    case ORDER_STATUS.CANCELLED:
+      return 'เปลี่ยนใจเมื่อไหร่ สั่งใหม่ได้เลยนะเมี๊ยว'
     default:
       return 'ขอบคุณที่มาอุดหนุนนะเมี๊ยว'
   }
@@ -44,7 +47,7 @@ export default function QueueTicket({ order, ordersAhead }) {
         <p className="text-muted">{getStatusMessage(order.status, ordersAhead)}</p>
       </div>
 
-      <OrderProgress status={order.status} />
+      {order.status !== ORDER_STATUS.CANCELLED && <OrderProgress status={order.status} />}
     </section>
   )
 }

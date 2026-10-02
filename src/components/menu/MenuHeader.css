@@ -26,19 +26,139 @@
   color: var(--color-text-muted);
 }
 
-.my-queue-chip {
+.menu-header__actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+}
+
+.menu-header__login-btn,
+.menu-header__staff-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: transform 0.15s var(--ease-out);
+}
+
+.menu-header__login-btn:active,
+.menu-header__staff-btn:active {
+  transform: scale(0.95);
+}
+
+.menu-header__login-btn {
+  background: var(--color-text);
+  color: var(--color-surface-raised);
+}
+
+.menu-header__staff-btn {
+  padding: 0 14px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.menu-header__menu-btn {
+  position: relative;
+  animation: pop-in 0.4s var(--ease-spring);
+}
+
+.menu-header__menu-btn:active {
+  transform: scale(0.94);
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hamburger span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--color-text);
+}
+
+.menu-header__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+
+.menu-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  text-align: left; /* also used on <button> */
+  text-decoration: none;
+  transition: transform 0.15s var(--ease-out);
+}
+
+.menu-nav__link:active {
+  transform: scale(0.98);
+}
+
+.menu-nav__icon {
+  font-size: 20px;
+}
+
+.menu-nav__label {
+  flex: 1;
+  font-family: var(--font-heading);
+  font-weight: 500;
+}
+
+.menu-nav__hint {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+
+.menu-nav__empty {
+  padding: 16px 0 8px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.menu-nav__queue {
   display: flex;
   align-items: center;
   gap: 8px;
-  height: 36px;
-  padding: 0 14px;
+  height: 30px;
+  padding: 0 12px;
   border-radius: var(--radius-full);
   background: var(--color-text);
   color: var(--color-surface-raised);
   font-size: 14px;
   font-weight: 500;
-  text-decoration: none;
-  animation: pop-in 0.4s var(--ease-spring);
+}
+
+.menu-nav__chevron {
+  color: var(--color-text-muted);
 }
 
 .status-dot {

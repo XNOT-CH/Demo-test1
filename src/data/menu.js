@@ -90,6 +90,14 @@ export const CATEGORIES = [
 
 const COFFEE_OPTIONS = ['temperature', 'sweetness', 'milk', 'extraShot']
 
+/** Options and artwork tint given to items staff add, per category. */
+export const CATEGORY_DEFAULTS = {
+  coffee: { optionGroups: COFFEE_OPTIONS, color: '#E8D3BE' },
+  tea: { optionGroups: ['temperature', 'sweetness'], color: '#D9E6C8' },
+  milk: { optionGroups: ['temperature', 'sweetness', 'milk'], color: '#F3E2CC' },
+  bakery: { optionGroups: ['warmUp'], color: '#F4DDB8' },
+}
+
 /** @type {MenuItem[]} */
 export const MENU_ITEMS = [
   // Coffee
